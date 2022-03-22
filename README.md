@@ -12,16 +12,26 @@ import (
 	"log"
 
 	"github.com/k1LoW/qp"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := sql.Open("postgres", "user=root password=root host=localhost dbname=test sslmode=disable")
+	db, err := sql.Open("sqlite3", "path/to/db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	_, _, = qp.Print(db, "SELECT * FROM users WHERE name = 'alice';")
+	_, _, = qp.Print(db, "SELECT * FROM users WHERE username = 'alice'")
 }
+```
 
+``` console
+$ go run main.go
++----+----------+----------+-------------------+---------------------+---------+
+| id | username | password |       email       |       created       | updated |
++----+----------+----------+-------------------+---------------------+---------+
+|  1 | alice    | passw0rd | alice@example.com | 2017-12-05 00:00:00 | <nil>   |
++----+----------+----------+-------------------+---------------------+---------+
+(1 row)
 ```
 
