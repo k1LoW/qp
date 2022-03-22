@@ -44,13 +44,29 @@ func TestPrint(t *testing.T) {
 		if _, err := db.ExecContext(ctx, testQuery); err != nil {
 			t.Fatal(err)
 		}
-		buf := new(bytes.Buffer)
-		if _, err := New(db, Context(ctx), Out(buf)).Print(tt.stmt); err != nil {
-			t.Fatal(err)
+
+		{
+			buf := new(bytes.Buffer)
+			if _, err := New(db, Context(ctx), Out(buf)).Print(tt.stmt); err != nil {
+				t.Fatal(err)
+			}
+			if got := buf.String(); got != tt.want {
+				t.Errorf("got\n%v\nwant\n%v", got, tt.want)
+			}
 		}
-		got := buf.String()
-		if got != tt.want {
-			t.Errorf("got\n%v\nwant\n%v", got, tt.want)
+
+		{
+			tx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			buf := new(bytes.Buffer)
+			if _, err := New(tx, Context(ctx), Out(buf)).Print(tt.stmt); err != nil {
+				t.Fatal(err)
+			}
+			if got := buf.String(); got != tt.want {
+				t.Errorf("got\n%v\nwant\n%v", got, tt.want)
+			}
 		}
 	}
 }
