@@ -13,17 +13,22 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-func Print(db *sql.DB, stmt string) (int, error) {
+type Querier interface {
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
+}
+
+func Print(db Querier, stmt string) (int, error) {
 	return New(db).Print(stmt)
 }
 
 type QueryPrinter struct {
 	out io.Writer
-	db  *sql.DB
+	db  Querier
 	ctx context.Context
 }
 
-func New(db *sql.DB, opts ...Option) *QueryPrinter {
+func New(db Querier, opts ...Option) *QueryPrinter {
 	qp := &QueryPrinter{
 		out: os.Stderr,
 		db:  db,
