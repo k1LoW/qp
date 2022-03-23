@@ -21,7 +21,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	_, _, = qp.Print(db, "SELECT * FROM users WHERE username = 'alice'")
+
+	qp.Print(db, "SELECT * FROM users WHERE username = 'alice'")
 }
 ```
 
