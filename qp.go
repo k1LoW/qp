@@ -30,7 +30,7 @@ type QueryPrinter struct {
 
 func New(db Querier, opts ...Option) *QueryPrinter {
 	qp := &QueryPrinter{
-		out: os.Stderr,
+		out: os.Stdout,
 		db:  db,
 		ctx: context.Background(),
 	}
